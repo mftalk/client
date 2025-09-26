@@ -13,4 +13,4 @@ jobs:
           token: ${{ secrets.PAT }}
           repository: ${{ matrix.repo }}
           event-type: update
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "module": "owner/submodule", "branch": "master"}'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "module": "mftalk/client", "branch": "master"}'
