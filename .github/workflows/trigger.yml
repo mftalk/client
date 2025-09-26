@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repo: ["owner/repo"]
+        repo: ["mftalk/mftalk"]
     steps:
       - name: Push to repo
         uses: peter-evans/repository-dispatch@v1
