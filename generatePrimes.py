@@ -1,7 +1,7 @@
 from sympy import *
 primes = []
 
-def generatePrimes(bar_show_terminal):
+def generatePrimes(bar_show_terminal=False):
     def bar(prg):
         barList = list()
         barList.append("[")
