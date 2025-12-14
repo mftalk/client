@@ -1,8 +1,9 @@
 from math import ceil, floor
 
-# ALL_LETTERS = string.printable # should be hardcoded and the same for ALL versions in all languages
+
+#ALL_LETTERS = string.printable # should be hardcoded and the same for ALL versions in all languages
 ALL_LETTERS = ""
-for i in range(32, 127):
+for i in range(32,127):
     ALL_LETTERS += chr(i)
 
 INVALID = "¤"
@@ -23,7 +24,7 @@ def randseed(seed: int, max: int) -> int:
     randtick += 1
     return random
 
-#shuffle
+
 checked_keys = []
 letters = ""
 i = randseed(76549134735931, len(ALL_LETTERS))
@@ -46,25 +47,26 @@ def generate_keysum(key: str) -> int:
     return key_sum
 
 
-def __base_crypt(text: str, key: str, mode: int) -> str:
-    key_sum: int = generate_keysum(key)
-    text_keysum: int = generate_keysum(text)
-    key_i: int = (round(len(key) / 3) + key_sum + text_keysum) % len(key)
+def __base_crypt(text: str, key: str, mode: str) -> str:
+    key_sum = generate_keysum(key)
+    key_i = (round(len(key) / 3) + key_sum) % len(key)
     output = ""
 
     for char in text:
-        key_char: str = key[key_i]
+        key_char = key[key_i]
         if not key_char in letters:
             key_char = INVALID
         key_val = letters.index(key_char)
 
         if not char in letters:
+            print(char)
             char = INVALID
         char_val = letters.index(char)
 
-        encrypted_val: int = (char_val + (key_val * mode)) % len(letters)
+        
+        encrypted_val = (char_val + (key_val * mode)) % len(letters)
 
-        encrypted_char: str = letters[encrypted_val]
+        encrypted_char = letters[encrypted_val]
 
         output += encrypted_char
         key_i = (key_i + 1) % len(key)
@@ -82,10 +84,11 @@ def decrypt(text: str, key: str) -> str:
 
 if __name__ == "__main__":
     import json
-
     v = encrypt(
-        "hello!",
+        "Hello World! This is AmberChriffre. An advanced, but simple and hard-to-crack chiffre developed by ItsGraphax, originally for AmberOS in OSWars 10 for scratch. It has now been made **even** better with v2! Am I the only one who's confused tho at why the heck theres a big G and a big D in for AmberOS and been?",
         "pizzalover122",
     )
     print(v)
     print(decrypt(v, "pizzalover122"))
+    with open("server/data/test.json", "w") as file:
+        json.dump([v], file)
