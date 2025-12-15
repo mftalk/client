@@ -1,9 +1,9 @@
 from math import ceil, floor
+from typing import Literal
 
-
-#ALL_LETTERS = string.printable # should be hardcoded and the same for ALL versions in all languages
+# ALL_LETTERS = string.printable # should be hardcoded and the same for ALL versions in all languages
 ALL_LETTERS = ""
-for i in range(32,127):
+for i in range(32, 127):
     ALL_LETTERS += chr(i)
 
 INVALID = "¤"
@@ -24,7 +24,7 @@ def randseed(seed: int, max: int) -> int:
     randtick += 1
     return random
 
-
+#shuffle
 checked_keys = []
 letters = ""
 i = randseed(76549134735931, len(ALL_LETTERS))
@@ -47,9 +47,10 @@ def generate_keysum(key: str) -> int:
     return key_sum
 
 
-def __base_crypt(text: str, key: str, mode: str) -> str:
+def __base_crypt(text: str, key: str, mode: Literal[ 1, -1]) -> str:
     key_sum = generate_keysum(key)
-    key_i = (round(len(key) / 3) + key_sum) % len(key)
+    text_keysum = generate_keysum(text)
+    key_i = (round(len(key) / 3) + key_sum + len(text)) % len(key)
     output = ""
 
     for char in text:
@@ -63,7 +64,6 @@ def __base_crypt(text: str, key: str, mode: str) -> str:
             char = INVALID
         char_val = letters.index(char)
 
-        
         encrypted_val = (char_val + (key_val * mode)) % len(letters)
 
         encrypted_char = letters[encrypted_val]
@@ -83,12 +83,10 @@ def decrypt(text: str, key: str) -> str:
 
 
 if __name__ == "__main__":
-    import json
+
     v = encrypt(
         "Hello World! This is AmberChriffre. An advanced, but simple and hard-to-crack chiffre developed by ItsGraphax, originally for AmberOS in OSWars 10 for scratch. It has now been made **even** better with v2! Am I the only one who's confused tho at why the heck theres a big G and a big D in for AmberOS and been?",
         "pizzalover122",
     )
     print(v)
     print(decrypt(v, "pizzalover122"))
-    with open("server/data/test.json", "w") as file:
-        json.dump([v], file)
