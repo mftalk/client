@@ -3,14 +3,14 @@
  * Demostration of encryption.h alias AmberChriffre....
  */
 
-#include "encryption.h"
+#include "../ambercypher.h"
 #include <stdio.h>
 
 #define MAXTEXTLENGHT 350
 
 
 
-int main() {
+int main(void) {
     printf("skript start\n");
 
 
@@ -22,11 +22,11 @@ int main() {
     printf("\nORIGINAL: `%s`", text);
 
     //unsigned char *result = baseEncryption(text, key, &seed1, &seed2, 1);
-    unsigned char *result = encrypt(text, key, &seed1, &seed2);
+    unsigned char *result = amberCencrypt(text, key, &seed1, &seed2);
 
     printf("\nENCRYPTED: `%s`", result);
 
-    unsigned char *decrypted = decrypt(result, key, &seed1, &seed2);
+    unsigned char *decrypted = amberCdecrypt(result, key, &seed1, &seed2);
 
     printf("\nDECRYPTED: `%s`",decrypted);
 

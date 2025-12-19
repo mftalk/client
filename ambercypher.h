@@ -136,7 +136,6 @@ unsigned char *baseEncryption(const unsigned char text[], const unsigned char ke
     unsigned char *letters = shuffle(seed1, seed2);
 
     unsigned int key_sum = generate_keysum(key, letters); //609
-    unsigned int text_keysum = generate_keysum(text, letters); //339
 
     
     const size_t keyLen = strlen((const char *)key); //13
@@ -158,12 +157,12 @@ unsigned char *baseEncryption(const unsigned char text[], const unsigned char ke
         unsigned char charInText = text[i];
 
         //if (!strchr(letters, key_char)) key_char = *INVALID; // TODO: INVALID CARACTERS SHOULD BE SUPPORTED
-        const char *key_charPos = strchr((const char *)letters, key_char);
+        const unsigned char *key_charPos = strchr((const char *)letters, key_char);
         if (!key_charPos) exit(-1);
         const unsigned int key_val = key_charPos - letters; //49
 
         //if (!strchr(&letters, charInText)) charInText = *INVALID; // " " " " " "  
-        const char *charInText_Pos = strchr((const char *)letters, charInText); //104 h
+        const unsigned char *charInText_Pos = strchr((const char *)letters, charInText); //104 h
         if (!charInText_Pos) exit(-1);
         const unsigned int char_val =  charInText_Pos - letters; //-35 33-104
 
@@ -180,13 +179,13 @@ unsigned char *baseEncryption(const unsigned char text[], const unsigned char ke
 
 }
 
-unsigned char *encrypt(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2) {
+unsigned char *amberCencrypt(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2) {
     unsigned char *result = baseEncryption(text, key, seed1, seed2, 1);
     return result;
 }
 
 
-unsigned char *decrypt(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2) {
+unsigned char *amberCdecrypt(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2) {
     unsigned char *result = baseEncryption(text, key, seed1, seed2, -1);
     return result;
 }
