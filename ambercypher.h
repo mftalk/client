@@ -1,10 +1,9 @@
-#ifndef MFTALK_LIBARY_H
+#ifndef MFTALK_LIBRARY_H
 #define MFTALK_LIBRARY_H
 #endif
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <math.h>
 
 
@@ -12,16 +11,13 @@
 //unsigned char * INVALID = "\n";
 
 
-unsigned int py_mod(int a, unsigned int b) {
-    int c_mod = a % (int)b;
+unsigned int py_mod(const unsigned int a, const unsigned long long int b) {
+    const int c_mod = a % (int)b;
 
     if (c_mod < 0) {
         return (unsigned int)b + c_mod;
     }
-    else 
-    {
-        return (unsigned int)c_mod;
-    }
+    return (unsigned int)c_mod;
 }
 
 
@@ -41,18 +37,18 @@ unsigned char *getAllChars(void) {
 }
 
 
-unsigned int randseed(unsigned int seed, unsigned int max, unsigned int *randtick) {
-    double tmp = (532.0 - (double)*randtick) * 2.3;
-    int part1 = (int)ceil(tmp);
-    int part2 = (int)floor((double)seed / 3.0);
+unsigned int randseed(const unsigned long int seed, const unsigned long long int max, unsigned int *randtick) {
+    const double tmp = (532.0 - (double)*randtick) * 2.3;
+    const unsigned int part1 = (int)ceil(tmp);
+    const unsigned int part2 = (int)floor((double)seed / 3.0);
 
-    int random = py_mod(abs(part1 + part2), max);
+    const unsigned int random = py_mod(part1 + part2, max);
     *randtick = *randtick + random + 1 + 1;
     return random;
 }
 
 
-int includes(const int *indexElement, size_t length, int checkedelement) {
+int includes(const int *indexElement, const size_t length, const int checkedelement) {
     for (size_t i = 0; i < length; ++i) {
         if (indexElement[i] == checkedelement) return 1;
     }
@@ -61,25 +57,25 @@ int includes(const int *indexElement, size_t length, int checkedelement) {
 
 
 
-unsigned char *shuffle(const unsigned int *seed1, const unsigned int *seed2) {
-    
+unsigned char *shuffle(const unsigned long int *seed1, const unsigned long int *seed2) {
+
     unsigned int randint = 1;
 
 
     const unsigned char *ALL_LETTERS = getAllChars();
-    size_t lenAllLetters = strlen((char *)ALL_LETTERS);
+    const size_t lenAllLetters = strlen((char *)ALL_LETTERS);
 
     int *checked_keys = calloc(lenAllLetters, sizeof(int));
 
     unsigned char *letters = malloc(lenAllLetters + 1);
 
 
-    int i = randseed(*seed1, (int)lenAllLetters, &randint);
-    
+    int unsigned i = randseed(*seed1, (int)lenAllLetters, &randint);
+
     for (size_t j = 0; j < lenAllLetters; ++j) {
-        
+
         int whileCount= 0;
-        while (includes(checked_keys, j,  i)){
+        while (includes(checked_keys, j, (int)i)){
             ++whileCount;
             i = randseed(*seed2, (int)lenAllLetters, &randint);
 
@@ -96,8 +92,8 @@ unsigned char *shuffle(const unsigned int *seed1, const unsigned int *seed2) {
             }
         }
         letters[j] = ALL_LETTERS[i];
-        checked_keys[j] = i;
-        
+        checked_keys[j] = (int)i;
+
         //i = randseed(seed2, (int)lenAllLetters, &randint);
     }
     letters[lenAllLetters] = '\0';
@@ -121,7 +117,7 @@ unsigned int generate_keysum(const char unsigned str[], const unsigned char lett
         }
 
         if (!isInStr) {
-            printf("invalid!");
+            //printf("invalid!");
             key_sum++;
         }
     }
@@ -132,60 +128,60 @@ unsigned int generate_keysum(const char unsigned str[], const unsigned char lett
 
 
 
-unsigned char *baseEncryption(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2, int mode) {
+unsigned char *baseEncryption(const unsigned char text[], const unsigned char key[], const unsigned long int *seed1, const unsigned long int *seed2, const int mode) {
     unsigned char *letters = shuffle(seed1, seed2);
 
-    unsigned int key_sum = generate_keysum(key, letters); //609
+    unsigned int key_sum = generate_keysum(key, letters);
 
-    
-    const size_t keyLen = strlen((const char *)key); //13
-    const size_t textLen = (int)strlen((const char *)text); // 6
+
+    const size_t keyLen = strlen((const char *)key);
+    const size_t textLen = (int)strlen((const char *)text);
 
     const size_t lettersLen = strlen((const char *)letters);
-    
-    unsigned int key_index = py_mod(((int)round((double)keyLen / 3) + key_sum + textLen), (unsigned int)keyLen); //3?
 
-    
+    unsigned int key_index = py_mod(((int)round((double)keyLen / 3) + key_sum + textLen), (unsigned int)keyLen);
+
+
 
     unsigned char *output = calloc(textLen + 1, sizeof(unsigned char));
 
-    
+
     //printf("\nInvalid: %s\n", *INVALID);
-    
+
     for (unsigned int i = 0; text[i] != '\0'; ++i) {
         unsigned char key_char = key[key_index];
         unsigned char charInText = text[i];
 
         //if (!strchr(letters, key_char)) key_char = *INVALID; // TODO: INVALID CARACTERS SHOULD BE SUPPORTED
         const unsigned char *key_charPos = strchr((const char *)letters, key_char);
-        if (!key_charPos) exit(-1);
-        const unsigned int key_val = key_charPos - letters; //49
+        //if (!key_charPos) exit(-1); //TODO: FIX
+        const unsigned int key_val = key_charPos - letters;
 
-        //if (!strchr(&letters, charInText)) charInText = *INVALID; // " " " " " "  
-        const unsigned char *charInText_Pos = strchr((const char *)letters, charInText); //104 h
-        if (!charInText_Pos) exit(-1);
-        const unsigned int char_val =  charInText_Pos - letters; //-35 33-104
+        //if (!strchr(&letters, charInText)) charInText = *INVALID; // " " " " " "
+        const unsigned char *charInText_Pos = strchr((const char *)letters, charInText);
+        //if (!charInText_Pos) exit(-1); //TODO: FIX
+        const unsigned int char_val =  charInText_Pos - letters;
 
-        unsigned int encrypted_val = py_mod((char_val + (key_val * mode)), (unsigned int)lettersLen); //68
+        unsigned int encrypted_val = py_mod((char_val + (key_val * mode)), (unsigned int)lettersLen);
 
         unsigned char encrypted_char = letters[encrypted_val];
 
-        output[i] = encrypted_char; // 67 C
+        output[i] = encrypted_char;
 
-        key_index = py_mod((key_index + 1), (unsigned int)keyLen); //8
+        key_index = py_mod((key_index + 1), (unsigned int)keyLen);
     }
     free(letters);
     return output;
 
 }
 
-unsigned char *amberCencrypt(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2) {
-    unsigned char *result = baseEncryption(text, key, seed1, seed2, 1);
+unsigned char *amberCencrypt(const unsigned char text[], const unsigned char key[], const unsigned long int seed1, const unsigned long int seed2) {
+    unsigned char *result = baseEncryption(text, key, &seed1, &seed2, 1);
     return result;
 }
 
 
-unsigned char *amberCdecrypt(const unsigned char text[], const unsigned char key[], const unsigned int *seed1, const unsigned int *seed2) {
-    unsigned char *result = baseEncryption(text, key, seed1, seed2, -1);
+unsigned char *amberCdecrypt(const unsigned char text[], const unsigned char key[], const unsigned long int seed1, const unsigned long int seed2) {
+    unsigned char *result = baseEncryption(text, key, &seed1, &seed2, -1);
     return result;
 }
