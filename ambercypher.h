@@ -1,6 +1,6 @@
 #ifndef MFTALK_LIBRARY_H
 #define MFTALK_LIBRARY_H
-#endif
+
 
 #include <stdlib.h>
 #include <string.h>
@@ -8,10 +8,9 @@
 
 
 
-//unsigned char * INVALID = "\n";
 
 
-unsigned int py_mod(const unsigned int a, const unsigned long long int b) {
+unsigned int py_mod(const int a, const unsigned long long int b) {
     const int c_mod = a % (int)b;
 
     if (c_mod < 0) {
@@ -39,10 +38,10 @@ unsigned char *getAllChars(void) {
 
 unsigned int randseed(const unsigned long int seed, const unsigned long long int max, unsigned int *randtick) {
     const double tmp = (532.0 - (double)*randtick) * 2.3;
-    const unsigned int part1 = (int)ceil(tmp);
-    const unsigned int part2 = (int)floor((double)seed / 3.0);
+    const int part1 = (int)ceil(tmp);
+    const int part2 = (int)floor((double)seed / 3.0);
 
-    const unsigned int random = py_mod(part1 + part2, max);
+    const unsigned int random = py_mod((part1 + part2), max);
     *randtick = *randtick + random + 1 + 1;
     return random;
 }
@@ -139,7 +138,7 @@ unsigned char *baseEncryption(const unsigned char text[], const unsigned char ke
 
     const size_t lettersLen = strlen((const char *)letters);
 
-    unsigned int key_index = py_mod(((int)round((double)keyLen / 3) + key_sum + textLen), (unsigned int)keyLen);
+    unsigned int key_index = py_mod((int)(round((double)keyLen / 3) + (double)key_sum + (double)textLen), (unsigned int)keyLen);
 
 
 
@@ -153,22 +152,22 @@ unsigned char *baseEncryption(const unsigned char text[], const unsigned char ke
         unsigned char charInText = text[i];
 
         //if (!strchr(letters, key_char)) key_char = *INVALID; // TODO: INVALID CARACTERS SHOULD BE SUPPORTED
-        const unsigned char *key_charPos = strchr((const char *)letters, key_char);
-        //if (!key_charPos) exit(-1); //TODO: FIX
+        const unsigned char *key_charPos = (const unsigned char *)strchr((const char *)letters, key_char);
+        if (!key_charPos) exit(-1);
         const unsigned int key_val = key_charPos - letters;
 
         //if (!strchr(&letters, charInText)) charInText = *INVALID; // " " " " " "
-        const unsigned char *charInText_Pos = strchr((const char *)letters, charInText);
-        //if (!charInText_Pos) exit(-1); //TODO: FIX
+        const unsigned char *charInText_Pos = (const unsigned char *)strchr((const char *)letters, charInText);
+        if (!charInText_Pos) exit(-1);
         const unsigned int char_val =  charInText_Pos - letters;
 
-        unsigned int encrypted_val = py_mod((char_val + (key_val * mode)), (unsigned int)lettersLen);
+        unsigned int encrypted_val = py_mod((int)(char_val + (key_val * mode)), (unsigned int)lettersLen);
 
         unsigned char encrypted_char = letters[encrypted_val];
 
         output[i] = encrypted_char;
 
-        key_index = py_mod((key_index + 1), (unsigned int)keyLen);
+        key_index = py_mod((int)(key_index + 1), (unsigned int)keyLen);
     }
     free(letters);
     return output;
@@ -185,3 +184,4 @@ unsigned char *amberCdecrypt(const unsigned char text[], const unsigned char key
     unsigned char *result = baseEncryption(text, key, &seed1, &seed2, -1);
     return result;
 }
+#endif
